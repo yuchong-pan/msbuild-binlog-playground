@@ -18,7 +18,8 @@ namespace MSBuildBinLogPlayground
             foreach (var binLogFilePath in args)
             {
                 // PrintFirstTenMessages(binLogFilePath);
-                PrintProjects(binLogFilePath);
+                // PrintProjects(binLogFilePath);
+                PrintTargets(binLogFilePath);
             }
         }
 
@@ -57,6 +58,16 @@ namespace MSBuildBinLogPlayground
             var build = BinaryLog.ReadBuild(binLogFilePath);
 
             build.VisitAllChildren<Project>(p => Console.WriteLine(p.Name));
+        }
+
+        private static void PrintTargets(string binLogFilePath)
+        {
+            var build = BinaryLog.ReadBuild(binLogFilePath);
+
+            build.VisitAllChildren<Project>(p =>
+            {
+                p.VisitAllChildren<Target>(t => Console.WriteLine(t.Name));
+            });
         }
 
         private static void PrintErrorMessage(string message)
