@@ -17,7 +17,14 @@ namespace MSBuildBinLogPlayground
 
             foreach (var binLogFilePath in args)
             {
-                var binLogReader = new BinLogReader();
+                // PrintFirstTenMessages(binLogFilePath);
+                PrintProjects(binLogFilePath);
+            }
+        }
+
+        private static void PrintFirstTenMessages(string binLogFilePath)
+        {
+            var binLogReader = new BinLogReader();
 
                 IEnumerable<Record> records;
                 try
@@ -29,8 +36,6 @@ namespace MSBuildBinLogPlayground
                     PrintErrorMessage($"Exception while reading binlog: {e.Message}");
                     return;
                 }
-
-                // print the first 10 <Message> events
 
                 var count = 0;
 
@@ -45,7 +50,13 @@ namespace MSBuildBinLogPlayground
                         }
                     }
                 }
-            }
+        }
+
+        private static void PrintProjects(string binLogFilePath)
+        {
+            var build = BinaryLog.ReadBuild(binLogFilePath);
+
+            build.VisitAllChildren<Project>(p => Console.WriteLine(p.Name));
         }
 
         private static void PrintErrorMessage(string message)
